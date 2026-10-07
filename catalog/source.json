@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "kind": "inflect-onnx-source-snapshot",
+  "generated_from": [
+    {
+      "repository": "owensong/Inflect-Nano-v2-ONNX",
+      "revision": "df3627e44c26192714c9dcba6b8e9b47e7a6e3d9"
+    },
+    {
+      "repository": "owensong/Inflect-Micro-v2-ONNX",
+      "revision": "91b1ab6432323064ec0e8e9704d92fcecd24855f"
+    }
+  ],
+  "note": "Bootstrap snapshot for the Inflect v2 official FP32 ONNX releases."
+}

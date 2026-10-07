@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/buchwandler/inflect-onnx-bundles/schema/v1",
+  "title": "Inflect ONNX model catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "kind", "models"],
+  "properties": {
+    "schema": {"const": 1},
+    "kind": {"const": "inflect-onnx-model-catalog"},
+    "models": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/model"}
+    }
+  },
+  "$defs": {
+    "safeName": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "format", "filename", "url", "size", "sha256"],
+      "properties": {
+        "role": {"enum": ["duration", "decode"]},
+        "format": {"const": "onnx"},
+        "filename": {"$ref": "#/$defs/safeName"},
+        "url": {"type": "string", "pattern": "^https://huggingface\\.co/[^/]+/[^/]+/resolve/[0-9a-f]{40}/onnx/.+\\.onnx$"},
+        "size": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "language", "gender", "synthetic"],
+      "properties": {
+        "id": {"$ref": "#/$defs/safeName"},
+        "name": {"type": "string", "minLength": 1},
+        "language": {"type": "string", "minLength": 2},
+        "gender": {"enum": ["male", "female", "unknown"]},
+        "synthetic": {"type": "boolean"}
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "aliases", "name", "version", "language", "sample_rate",
+        "voice_mode", "default_voice", "voices", "controls", "runtime",
+        "upstream", "artifacts", "metadata"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/safeName"},
+        "aliases": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/safeName"}},
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "language": {"type": "string", "minLength": 2},
+        "sample_rate": {"const": 24000},
+        "voice_mode": {"const": "fixed"},
+        "default_voice": {"const": "default"},
+        "voices": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/voice"}
+        },
+        "controls": {"type": "object"},
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profile", "precision", "onnx_opset"],
+          "properties": {
+            "profile": {"const": "inflect-v2-split-v1"},
+            "precision": {"const": "fp32"},
+            "onnx_opset": {"const": 17}
+          }
+        },
+        "upstream": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider", "repository", "revision", "license", "source_repository", "source_revision"],
+          "properties": {
+            "provider": {"const": "huggingface"},
+            "repository": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
+            "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+            "license": {"const": "Apache-2.0"},
+            "source_repository": {"type": "string", "pattern": "^[^/\\s]+/[^/\\s]+$"},
+            "source_revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+          }
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/artifact"}
+        },
+        "metadata": {"type": "object"}
+      }
+    }
+  }
+}

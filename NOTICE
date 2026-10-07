@@ -1,0 +1,4 @@
+inflect-onnx-bundles
+
+Catalog metadata references official Inflect v2 ONNX releases by Owen Song.
+Original Inflect code and weights are Apache-2.0. This repository does not mirror model weights.
